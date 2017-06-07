@@ -25,18 +25,20 @@ def glittercsvfix(infile):
     outfile_chondrite = filepath + '_chondrite' + '-fixed' + ext
     filetype = ''
 
-    if linecache.getline(infile, 8) == ('GLITTER!: Trace Element' +
-                                        'Concentrations MDL filtered.' +  '\n'):
+    if linecache.getline(infile, 8) == ('GLITTER!: Trace Element '
+                                        'Concentrations MDL filtered.\n'):
         filetype = 'trace'
-        FIRST_SPLIT_TEXT = ('GLITTER!: Trace Element Concentrations MDL' +
-                            ' filtered.' + '\n')
-        SECOND_SPLIT_TEXT = ('GLITTER!: Trace Element Concentrations, Not' +
-                             ' filtered for MDL.' + '\n')
+        FIRST_SPLIT_TEXT = ('GLITTER!: Trace Element Concentrations MDL '
+                            'filtered.\n')
+        SECOND_SPLIT_TEXT = ('GLITTER!: Trace Element Concentrations, Not '
+                             'filtered for MDL.\n')
         THIRD_SPLIT_TEXT = ('GLITTER!: 1 sigma error.' + '\n')
-        FOURTH_SPLIT_TEXT = ('GLITTER!: Minimum detection limits' +
-                                '(99% confidence).' + '\n')
-        FIFTH_SPLIT_TEXT = ('GLITTER!: Trace element concentrations normalised to chondrite.' + '\n')
-        SIXTH_SPLIT_TEXT = ('GLITTER!: Mean Raw CPS background NOT subtracted.' + '\n')
+        FOURTH_SPLIT_TEXT = ('GLITTER!: Minimum detection limits '
+                             '(99% confidence).\n')
+        FIFTH_SPLIT_TEXT = ('GLITTER!: Trace element concentrations '
+                            'normalised to chondrite.\n')
+        SIXTH_SPLIT_TEXT = ('GLITTER!: Mean Raw CPS background NOT '
+                            'subtracted.\n')
 
     with open(infile, 'rU') as f:
         lines = list(f)
