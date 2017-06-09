@@ -39,6 +39,9 @@ def glittercsvfix(infile):
                             'normalised to chondrite.\n')
         SIXTH_SPLIT_TEXT = ('GLITTER!: Mean Raw CPS background NOT '
                             'subtracted.\n')
+    else:
+        print 'Error: %s is an unsupported file type' % (infile)
+        return 0
 
     with open(infile, 'rU') as f:
         lines = list(f)
