@@ -1,9 +1,9 @@
+""" Reformat solution data from Quantum software (ICPExpert) """
+
 import os
 from datetime import datetime
 from glob import glob
-from shutil import copyfile
 import csv
-import codecs
 import pandas as pd
 
 
@@ -11,16 +11,16 @@ def list_files(path, ext):
     """Find files recursively."""
     files = [y for x in os.walk(path) for y in glob(os.path.join(x[0], ext))]
     for f in files:
-        if not 'reformatted' in f:
+        if 'reformatted' not in f:
             reformat(f)
+
 
 def reformat(infile):
     fp, ex = os.path.splitext(infile)
-    usefile = fp + '-temp' + ex
     with open(infile, 'r') as f:
         data = f.read().splitlines(True)
         df = pd.DataFrame(list(csv.reader(data[2:])))
-        
+
     new_header = df.iloc[0]
     df = df[1:]
     df.columns = new_header
@@ -60,5 +60,6 @@ def reformat(infile):
     filepath, ext = os.path.splitext(infile)
     filename = filepath + '-reformatted-' + now + ext
     df2.to_csv(filename)
+
 
 list_files('./', '*.csv')

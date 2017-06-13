@@ -1,3 +1,5 @@
+""" Reformat Glitter data"""
+
 import os
 import time
 from glob import glob
@@ -5,12 +7,14 @@ import csv
 import linecache
 import pandas as pd
 
+
 def list_files(path, ext):
     """Find files recursively."""
     files = [y for x in os.walk(path) for y in glob(os.path.join(x[0], ext))]
     for f in files:
-        if not 'fixed' in f:
+        if 'fixed' not in f:
             glittercsvfix(f)
+
 
 def glittercsvfix(infile):
 
@@ -23,11 +27,9 @@ def glittercsvfix(infile):
     outfile_nomdl = filepath + '_not-mdl-filtered' + '-fixed' + ext
     outfile_detlim = filepath + '_min-det-lim-99%' + '-fixed' + ext
     outfile_chondrite = filepath + '_chondrite' + '-fixed' + ext
-    filetype = ''
 
     if linecache.getline(infile, 8) == ('GLITTER!: Trace Element '
                                         'Concentrations MDL filtered.\n'):
-        filetype = 'trace'
         FIRST_SPLIT_TEXT = ('GLITTER!: Trace Element Concentrations MDL '
                             'filtered.\n')
         SECOND_SPLIT_TEXT = ('GLITTER!: Trace Element Concentrations, Not '
@@ -103,16 +105,11 @@ def glittercsvfix(infile):
     df_nomdl.to_csv(outfile_nomdl, index=False, header=False)
     df_detlim.to_csv(outfile_detlim, index=False, header=False)
     df_chondrite.to_csv(outfile_chondrite, index=False, header=False)
-    # writer = pd.ExcelWriter('test.xls')
-    # df_mdl.to_excel(writer, sheet_name='mdl-filtered', index=False, header=True)
-    # df_nomdl.to_excel(writer, sheet_name='not-mdl-filtered', index=False, header=True)
-    # df_detlim.to_excel(writer, sheet_name='mdl-99%-confidence', index=False, header=True)
-    # df_chondrite.to_excel(writer, sheet_name='chondrite-normalised', index=False, header=True)
-    # writer.save()
 
     print time.strftime('%Y-%d-%m %H:%M:%S'), ': Fixed', outfile_mdl
     print time.strftime('%Y-%d-%m %H:%M:%S'), ': Fixed', outfile_nomdl
     print time.strftime('%Y-%d-%m %H:%M:%S'), ': Fixed', outfile_detlim
     print time.strftime('%Y-%d-%m %H:%M:%S'), ': Fixed', outfile_chondrite
+
 
 list_files('./', '*.csv')
