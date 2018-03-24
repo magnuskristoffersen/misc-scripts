@@ -1,4 +1,5 @@
-""" Reformat Glitter data"""
+""" Reformat Glitter data
+Only works in python27 """
 
 import os
 import time
@@ -42,7 +43,7 @@ def glittercsvfix(infile):
         SIXTH_SPLIT_TEXT = ('GLITTER!: Mean Raw CPS background NOT '
                             'subtracted.\n')
     else:
-        print 'Error: %s is an unsupported file type' % (infile)
+        print ('Error: %s is an unsupported file type' % (infile))
         return 0
 
     with open(infile, 'rU') as f:
@@ -101,15 +102,22 @@ def glittercsvfix(infile):
     df_nomdl = pd.DataFrame(comblist_nomdl)
     df_detlim = pd.DataFrame(zip(*fifthpart))
     df_chondrite = pd.DataFrame(zip(*sixthpart))
-    df_mdl.to_csv(outfile_mdl, index=False, header=False)
-    df_nomdl.to_csv(outfile_nomdl, index=False, header=False)
-    df_detlim.to_csv(outfile_detlim, index=False, header=False)
-    df_chondrite.to_csv(outfile_chondrite, index=False, header=False)
+    # Write directly to individual sheets in a spreadsheet-file
+    writer = pd.ExcelWriter(filepath + '.xlsx')
+    df_mdl.to_excel(writer, 'MDL-filtered')
+    df_nomdl.to_excel(writer, 'not-MDL-filtered')
+    df_detlim.to_excel(writer, 'Det.lim(99%)')
+    df_chondrite.to_excel(writer, 'Chondrite-normalised')
+    writer.save()
+    print time.strftime('%Y-%d-%m %H:%M:%S'), ': Fixed', filepath
 
-    print time.strftime('%Y-%d-%m %H:%M:%S'), ': Fixed', outfile_mdl
-    print time.strftime('%Y-%d-%m %H:%M:%S'), ': Fixed', outfile_nomdl
-    print time.strftime('%Y-%d-%m %H:%M:%S'), ': Fixed', outfile_detlim
-    print time.strftime('%Y-%d-%m %H:%M:%S'), ': Fixed', outfile_chondrite
-
+    # df_mdl.to_csv(outfile_mdl, index=False, header=False)
+    # df_nomdl.to_csv(outfile_nomdl, index=False, header=False)
+    # df_detlim.to_csv(outfile_detlim, index=False, header=False)
+    # df_chondrite.to_csv(outfile_chondrite, index=False, header=False)
+    # print(time.strftime('%Y-%d-%m %H:%M:%S'), ': Fixed', outfile_mdl)
+    # print(time.strftime('%Y-%d-%m %H:%M:%S'), ': Fixed', outfile_nomdl)
+    # print(time.strftime('%Y-%d-%m %H:%M:%S'), ': Fixed', outfile_detlim)
+    # print(time.strftime('%Y-%d-%m %H:%M:%S'), ': Fixed', outfile_chondrite)
 
 list_files('./', '*.csv')
