@@ -7,6 +7,7 @@ from glob import glob
 import csv
 import linecache
 import pandas as pd
+import xlsxwriter
 
 
 def list_files(path, ext):
@@ -97,13 +98,29 @@ def glittercsvfix(infile):
 
     comblist_mdl = zip(*comblist_mdl[1:])
     comblist_nomdl = zip(*comblist_nomdl[1:])
-
-    df_mdl = pd.DataFrame(comblist_mdl)
-    df_nomdl = pd.DataFrame(comblist_nomdl)
-    df_detlim = pd.DataFrame(zip(*fifthpart))
-    df_chondrite = pd.DataFrame(zip(*sixthpart))
+    columns1 = [element for element in comblist_mdl[0:1][0]]
+    index1 = []
+    columns2 = []
+    for i in range(len(comblist_mdl)):
+        index1.append(comblist_mdl[i][0])
+    df_mdl = pd.DataFrame(comblist_mdl, columns=columns1, index=index1)
+    df_nomdl = pd.DataFrame(comblist_nomdl, columns=columns1, index=index1)
+    for element in columns1:
+        if element != '1sigma':
+            columns2.append(element)
+    df_mdl.drop(df_mdl.index[0], inplace=True)
+    df_mdl.drop(['Element'], axis=1, inplace=True)
+    df_nomdl.drop(df_nomdl.index[0], inplace=True)
+    df_nomdl.drop(['Element'], axis=1, inplace=True)
+    df_detlim = pd.DataFrame(zip(*fifthpart), columns=columns2, index=index1)
+    df_chondrite = pd.DataFrame(zip(*sixthpart), columns=columns2, index=index1)
+    df_detlim.drop(df_detlim.index[0], inplace=True)
+    df_detlim.drop(['Element'], axis=1, inplace=True)
+    df_chondrite.drop(df_chondrite.index[0], inplace=True)
+    df_chondrite.drop(['Element'], axis=1, inplace=True)
     # Write directly to individual sheets in a spreadsheet-file
-    writer = pd.ExcelWriter(filepath + '.xlsx')
+    writer = pd.ExcelWriter(filepath + '.xlsx', engine='xlsxwriter',
+                            options={'strings_to_numbers': True})
     df_mdl.to_excel(writer, 'MDL-filtered')
     df_nomdl.to_excel(writer, 'not-MDL-filtered')
     df_detlim.to_excel(writer, 'Det.lim(99%)')
