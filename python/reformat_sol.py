@@ -35,10 +35,12 @@ def reformat(infile):
         i += 1
 
     elements = list(df['Element'].unique())
-    sd = ['SD'] * len(elements)
-    columns = [None] * (len(elements)+len(sd))
-    columns[::2] = elements
-    columns[1::2] = sd
+    sd = ['%RSD'] * len(elements)
+    flags = ['Flag'] * len(elements)
+    columns = [None] * (len(elements) + len(sd) + len(flags))
+    columns[::3] = elements
+    columns[1::3] = sd
+    columns[2::3] = flags
 
     df2 = pd.DataFrame(index=index, columns=columns)
     df2.fillna('None')
@@ -49,10 +51,12 @@ def reformat(infile):
     for uni in uni_type:
         uni_df = df.loc[(df.Type == uni)]
         conc = list(uni_df['Corr Conc'])
-        sd = list(uni_df['SD'])
-        results = [None] * (len(conc) + len(sd))
-        results[::2] = conc
-        results[1::2] = sd
+        sd = list(uni_df['%RSD'])
+        flags = list(uni_df['Flags'])
+        results = [None] * (len(conc) + len(sd) + len(flags))
+        results[::3] = conc
+        results[1::3] = sd
+        results[2::3] = flags
         df2.iloc[i] = results
         i += 1
 
